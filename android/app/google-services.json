@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "274978425664",
+    "project_id": "rev-lathnog-projects",
+    "storage_bucket": "rev-lathnog-projects.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274978425664:android:ca7b6bdc740cf7dc7e88a5",
+        "android_client_info": {
+          "package_name": "com.example.rev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "274978425664-gij4aadj1e99ci53iko9ki7eltjo3rvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAli1WrTmyV5wteHw7Rd2HfTBci8cI5xpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274978425664-gij4aadj1e99ci53iko9ki7eltjo3rvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
