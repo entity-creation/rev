@@ -8,6 +8,15 @@ class NavStateUninitialized extends NavState {
   const NavStateUninitialized();
 }
 
+class NavStateIsLoading extends NavState {
+  final String loadingText;
+  const NavStateIsLoading({this.loadingText = "Hold on"});
+}
+
+class NavStateDataFetched extends NavState {
+  const NavStateDataFetched();
+}
+
 class NavStateLoggedIn extends NavState {
   final AuthUser user;
   const NavStateLoggedIn(this.user);

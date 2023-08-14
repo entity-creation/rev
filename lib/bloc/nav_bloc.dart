@@ -42,6 +42,14 @@ class NavBloc extends Bloc<NavEvent, NavState> {
       },
     );
 
+    on<NavEventGetData>((event, emit) async {
+      if (event.snapshot.hasData) {
+        emit(const NavStateDataFetched());
+      } else {
+        emit(const NavStateIsLoading());
+      }
+    });
+
     on<NavEventLogOut>((event, emit) async {
       try {
         await provider.logout();

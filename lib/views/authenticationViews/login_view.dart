@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/auth/auth_service.dart';
+import 'package:rev/bloc/nav_event.dart';
 
+import '../../bloc/nav_bloc.dart';
 import '../../constants/routes.dart';
 
 class LoginView extends StatefulWidget {
@@ -52,7 +55,7 @@ class _LoginViewState extends State<LoginView> {
             obscureText: true,
             obscuringCharacter: "*",
             decoration: const InputDecoration(
-              hintText: "Enter you email",
+              hintText: "Enter you password",
             ),
           ),
           const SizedBox(
@@ -65,8 +68,9 @@ class _LoginViewState extends State<LoginView> {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     emailVerificationRoute, (route) => false);
               } else {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    bottomNavigationRoute, (route) => false);
+                final email = _email.text;
+                final password = _password.text;
+                context.read<NavBloc>().add(NavEventLogIn(email, password));
               }
             },
             child: const Text("Login"),

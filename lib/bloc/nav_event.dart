@@ -13,10 +13,16 @@ class NavEventLogIn extends NavEvent {
   final String email;
   final String password;
 
-  const NavEventLogIn({
-    required this.email,
-    required this.password,
-  });
+  const NavEventLogIn(
+    this.email,
+    this.password,
+  );
+}
+
+class NavEventGetData extends NavEvent {
+  final AsyncSnapshot snapshot;
+
+  const NavEventGetData(this.snapshot);
 }
 
 class NavEventLogOut extends NavEvent {

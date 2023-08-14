@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/auth/auth_service.dart';
+import 'package:rev/bloc/nav_bloc.dart';
+import 'package:rev/bloc/nav_event.dart';
 import 'package:rev/constants/routes.dart';
 import 'package:rev/dialogs/logout_dialog.dart';
 import 'package:rev/enums/menu_action.dart';
@@ -38,8 +41,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
                   final shouldLogout = await showLogoutDialog(context);
                   if (shouldLogout) {
                     await _service.logout();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                    context.read<NavBloc>().add(NavEventLogOut());
                   }
                 case MenuAction.settings:
               }
