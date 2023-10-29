@@ -20,11 +20,26 @@ class NavEventLogIn extends NavEvent {
 }
 
 class NavEventGetData extends NavEvent {
-  final AsyncSnapshot snapshot;
+  final bool hasData;
 
-  const NavEventGetData(this.snapshot);
+  const NavEventGetData(this.hasData);
 }
 
 class NavEventLogOut extends NavEvent {
   const NavEventLogOut();
+}
+
+class NavEventRegister extends NavEvent {
+  const NavEventRegister();
+}
+
+class NavEventRegisterUser extends NavEvent {
+  final String email;
+  final String password;
+
+  const NavEventRegisterUser({required this.email, required this.password});
+}
+
+class NavEventSendVerification extends NavEvent {
+  const NavEventSendVerification();
 }

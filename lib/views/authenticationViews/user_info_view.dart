@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/auth/auth_service.dart';
 import 'package:rev/auth/user/user_service.dart';
+import 'package:rev/bloc/nav_bloc.dart';
+import 'package:rev/bloc/nav_event.dart';
 
 import '../../constants/routes.dart';
 import '../../services/image_service.dart';
@@ -89,16 +92,24 @@ class _UserInfoState extends State<UserInfo> {
               ),
             ],
           ),
-          TextField(
-            controller: _firstName,
-            decoration: const InputDecoration(
-              hintText: "Enter your first name",
-            ),
-          ),
-          TextField(
-            controller: _lastName,
-            decoration: const InputDecoration(
-              hintText: "Enter your last name",
+          Container(
+            margin: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _firstName,
+                  decoration: const InputDecoration(
+                    hintText: "Enter your first name",
+                  ),
+                ),
+                TextField(
+                  controller: _lastName,
+                  decoration: const InputDecoration(
+                    hintText: "Enter your last name",
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(
@@ -106,12 +117,19 @@ class _UserInfoState extends State<UserInfo> {
           ),
           ElevatedButton(
             onPressed: () async {
-              var imageUrl = await _userService.uploadProfileImage(image!);
-              await _userService.createUserInfo(
-                  "${_firstName.text} ${_lastName.text}", imageUrl);
-              if (!service.currentUser!.isEmailVerified) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    emailVerificationRoute, (route) => false);
+              if (image == null ||
+                  _firstName.text == "" ||
+                  _lastName.text == "") {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        "Missing information, please fill all fields and try again")));
+              } else {
+                var imageUrl = await _userService.uploadProfileImage(image!);
+                await _userService.createUserInfo(
+                    "${_firstName.text} ${_lastName.text}", imageUrl);
+                if (!service.currentUser!.isEmailVerified) {
+                  context.read<NavBloc>().add(const NavEventSendVerification());
+                }
               }
             },
             child: const Text("Continue"),

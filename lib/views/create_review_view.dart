@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:rev/auth/auth_service.dart';
 import 'package:rev/constants/field_constants.dart';
 import 'package:rev/constants/routes.dart';
+import 'package:rev/dialogs/error_dialog.dart';
 import 'package:rev/dialogs/success_dialog.dart';
 import 'package:rev/product/product_service.dart';
 import 'package:rev/review/review_services.dart';
 import 'package:rev/services/image_service.dart';
+import 'package:rev/utitlities/to_title_case.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 
 class CreateReviewView extends StatefulWidget {
@@ -169,28 +171,38 @@ class _CreateReviewViewState extends State<CreateReviewView> {
           ),
           TextButton(
               onPressed: () async {
-                var imageUrl =
-                    await _reviewServices.uploadProductImages(image as File);
-                var productId = await _productService.createProduct(
-                    name: _productName.text,
-                    pictureUrl: imageUrl,
-                    ratings: _revRatings,
-                    storeId: _storeId);
-                await _reviewServices.createReview(
-                    userId: _userId,
-                    productId: productId,
-                    ratings: _revRatings,
-                    comments: _comments.text,
-                    storeId: _storeId);
-                await successDialog(context);
-                setState(() {
-                  _comments.text = "";
-                  _productName.text = "";
-                  _revRatings = 0;
-                  image = null;
-                  _storeId = "";
-                  _selectedStore = null;
-                });
+                if (image == null ||
+                    _revRatings == 0 ||
+                    _productName.text == "" ||
+                    _selectedStore == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text("Missing information, please fill all fields"),
+                  ));
+                } else {
+                  var imageUrl =
+                      await _reviewServices.uploadProductImages(image as File);
+                  var productId = await _productService.createProduct(
+                      name: toTitleCase(_productName.text),
+                      pictureUrl: imageUrl,
+                      ratings: _revRatings,
+                      storeId: _storeId);
+                  await _reviewServices.createReview(
+                      userId: _userId,
+                      productId: productId,
+                      ratings: _revRatings,
+                      comments: _comments.text,
+                      storeId: _storeId);
+                  await successDialog(context);
+                  setState(() {
+                    _comments.text = "";
+                    _productName.text = "";
+                    _revRatings = 0;
+                    image = null;
+                    _storeId = "";
+                    _selectedStore = null;
+                  });
+                }
               },
               child: const Text("Submit")),
         ],

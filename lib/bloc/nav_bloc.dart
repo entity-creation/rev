@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/auth/auth_provider.dart';
 import 'package:rev/bloc/nav_state.dart';
@@ -5,23 +7,22 @@ import 'package:rev/bloc/nav_state.dart';
 import 'nav_event.dart';
 
 class NavBloc extends Bloc<NavEvent, NavState> {
-  NavBloc(AuthProvider provider) : super(const NavStateUninitialized()) {
+  NavBloc(AuthProvider provider)
+      : super(const NavStateUninitialized(false, "")) {
     on<NavEventInitialize>((event, emit) async {
       await provider.initialize();
       final user = provider.currentUser;
       if (user == null) {
-        emit(const NavStateLoggedOut(
-          exception: null,
-          isLoading: false,
-        ));
+        emit(const NavStateLoggedOut(false, exception: null, ""));
       } else {
-        emit(NavStateLoggedIn(user));
+        emit(const NavStateIsLoading(false, ""));
+        emit(NavStateLoggedIn(false, "", user));
       }
     });
 
     on<NavEventLogIn>(
       (event, emit) async {
-        emit(const NavStateLoggedOut(exception: null, isLoading: true));
+        emit(const NavStateLoggedOut(true, exception: null, "Hold On"));
 
         final email = event.email;
         final password = event.password;
@@ -30,32 +31,55 @@ class NavBloc extends Bloc<NavEvent, NavState> {
             email,
             password,
           );
-          if (user != null) {
-            emit(const NavStateLoggedOut(exception: null, isLoading: false));
-            emit(NavStateLoggedIn(user));
+          if (user.isEmailVerified) {
+            emit(const NavStateLoggedOut(false, exception: null, ""));
+            emit(NavStateLoggedIn(false, "", user));
+          } else if (!user.isEmailVerified) {
+            emit(const NavStateNotVerified(false, ""));
           } else {
-            emit(const NavStateLoggedOut(exception: null, isLoading: false));
+            emit(const NavStateLoggedOut(false, "", exception: null));
           }
         } on Exception catch (e) {
-          emit(NavStateLoggedOut(exception: e, isLoading: false));
+          emit(NavStateLoggedOut(false, exception: e, ""));
         }
       },
     );
 
     on<NavEventGetData>((event, emit) async {
-      if (event.snapshot.hasData) {
-        emit(const NavStateDataFetched());
+      if (event.hasData) {
+        emit(const NavStateDataFetched(false, ""));
       } else {
-        emit(const NavStateIsLoading());
+        emit(const NavStateIsLoading(true, "Hold On"));
+      }
+    });
+
+    on<NavEventSendVerification>((event, emit) {
+      emit(const NavStateNotVerified(false, ""));
+    });
+
+    on<NavEventRegister>(
+      (event, emit) {
+        emit(const NavStateRegistering(false, "", null));
+      },
+    );
+
+    on<NavEventRegisterUser>((event, emit) async {
+      final email = event.email;
+      final password = event.password;
+      try {
+        await provider.register(email, password);
+        emit(const NavStateGettingUserData(false, ""));
+      } on Exception catch (e) {
+        emit(NavStateRegistering(false, "", e));
       }
     });
 
     on<NavEventLogOut>((event, emit) async {
       try {
         await provider.logout();
-        emit(const NavStateLoggedOut(exception: null, isLoading: false));
+        emit(const NavStateLoggedOut(false, exception: null, ""));
       } on Exception catch (e) {
-        emit(NavStateLoggedOut(exception: e, isLoading: false));
+        emit(NavStateLoggedOut(false, exception: e, ""));
       }
     });
   }

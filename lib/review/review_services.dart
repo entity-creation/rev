@@ -10,6 +10,7 @@ import 'package:rev/exceptions/exceptions.dart';
 import 'package:rev/product/product_service.dart';
 import 'package:rev/review/review.dart';
 import 'package:rev/review/store.dart';
+import 'package:rev/utitlities/to_title_case.dart';
 
 class ReviewService {
   final _stores = FirebaseFirestore.instance.collection("stores");
@@ -109,8 +110,9 @@ class ReviewService {
   }
 
   Future<Iterable<Review>> searchReview(String productName) async {
+    String formattedWord = toTitleCase(productName);
     try {
-      var productIds = await ProductService().getProductByName(productName);
+      var productIds = await ProductService().getProductByName(formattedWord);
       final documents =
           await _reviews.where(productField, whereIn: productIds).get();
 

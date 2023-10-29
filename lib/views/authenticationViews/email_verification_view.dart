@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/auth/auth_service.dart';
+import 'package:rev/bloc/nav_bloc.dart';
+import 'package:rev/bloc/nav_event.dart';
 
 import '../../constants/routes.dart';
 
@@ -27,8 +30,7 @@ class EmailVerificationView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+              context.read<NavBloc>().add(const NavEventLogOut());
             },
             child: const Text("Login"),
           ),

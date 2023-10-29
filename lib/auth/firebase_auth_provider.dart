@@ -47,8 +47,14 @@ class FirebaseAuthProvider extends AuthProvider {
       } else {
         throw UserNotLoggedInException();
       }
-    } on Exception catch (e) {
-      throw UserNotLoggedInException();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "user-not-found") {
+        throw UserNotFoundAuthException();
+      } else if (e.code == "wrong-password") {
+        throw WrongPasswordAuthException();
+      } else {
+        throw UserNotLoggedInException();
+      }
     }
   }
 
@@ -76,8 +82,16 @@ class FirebaseAuthProvider extends AuthProvider {
       } else {
         throw CouldNotRegisterUserException();
       }
-    } on Exception catch (e) {
-      throw CouldNotRegisterUserException();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "weak-password") {
+        throw WeakPasswordAuthException();
+      } else if (e.code == "email-already-in-use") {
+        throw EmailAlreadyInUseAuthException();
+      } else if (e.code == "invalid-email") {
+        throw InvalidEmailAuthException();
+      } else {
+        throw CouldNotRegisterUserException();
+      }
     }
   }
 
